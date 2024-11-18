@@ -14,3 +14,6 @@ GET http://localhost:3000/api/products
 
 GET http://localhost:3000/api/users/1
 
+### get users with query params
+
+GET http://localhost:3000/api/users?filter=name&value=ja

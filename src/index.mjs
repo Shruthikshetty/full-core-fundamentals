@@ -76,7 +76,21 @@ app.get("/", (req, res) => {
 
 //user route
 app.get("/api/users", (req, res) => {
-  res.send(mockUsers);
+  //   console.log(req.query);
+  const { filter, value } = req.query;
+  if (filter && value) {
+    try {
+      const filteredUsers = mockUsers.filter((user) => {
+        return user[filter].includes(value);
+      });
+      return res.send(filteredUsers);
+    } catch (error) {
+      return res.status(500).send("something went wrong");
+    }
+  }
+  // if there is no filter and value, return all users
+
+  return res.send(mockUsers);
 });
 
 //get a single user by id
