@@ -1,0 +1,16 @@
+### base url
+
+GET http://localhost:3000
+
+### user route
+
+GET http://localhost:3000/api/users
+
+### product route
+
+GET http://localhost:3000/api/products
+
+### get a single user by id
+
+GET http://localhost:3000/api/users/1
+
