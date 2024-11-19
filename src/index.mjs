@@ -118,6 +118,31 @@ app.post("/api/users", (req, res) => {
   res.status(201).send(newUser);
 });
 
+/**
+ * a PATCH req updates a record partially
+ * a PUT req we are upadteing a entire resource  (we need to include all the keys while sending the request)
+ */
+
+// update a single user
+app.put("/api/users/:id", (req, res) => {
+    const { body, params } = req;
+    const { id } = params;
+
+    const parsedId = Number(id);
+    if (isNaN(parsedId)) return res.sendStatus(400);
+
+    const findUserIndex = mockUsers.findIndex((user) => user.id === parsedId);
+
+    if (findUserIndex === -1) return res.sendStatus(404);
+
+    mockUsers[findUserIndex] = { id: parsedId, ...body };
+    res.status(200).send(mockUsers);
+});
+
+/**
+ * DELETE is used to delete a record
+ */
+
 //product route
 app.get("/api/products", (req, res) => {
   res.send(mockProducts);
