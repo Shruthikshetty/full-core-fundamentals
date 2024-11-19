@@ -7,11 +7,14 @@ dotenv.config();
 // create an express app
 const app = express();
 
+//middleware to parse json bodies
+app.use(express.json());
+
 const PORT = process.env.PORT ?? 3000;
 
 // mock data
 
-const mockUsers = [
+let mockUsers = [
   {
     id: 1,
     name: "john",
@@ -105,6 +108,14 @@ app.get("/api/users/:id", (req, res) => {
     return res.status(404).send("User not found");
   }
   res.send(user);
+});
+
+//post to create a new user
+app.post("/api/users", (req, res) => {
+  const body = req.body;
+  const newUser = { id: mockUsers[mockUsers.length - 1].id + 1, ...body };
+  mockUsers.push(newUser);
+  res.status(201).send(newUser);
 });
 
 //product route

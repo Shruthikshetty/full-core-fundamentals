@@ -2,11 +2,11 @@
 
 GET http://localhost:3000
 
-### user route
+### get all users
 
 GET http://localhost:3000/api/users
 
-### product route
+### get all products
 
 GET http://localhost:3000/api/products
 
@@ -17,3 +17,13 @@ GET http://localhost:3000/api/users/1
 ### get users with query params
 
 GET http://localhost:3000/api/users?filter=name&value=ja
+
+### post a new user
+
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+ {
+     "name": "alice",
+     "displayName": "alice wonderland"
+ }
