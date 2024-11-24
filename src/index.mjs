@@ -139,6 +139,21 @@ app.put("/api/users/:id", (req, res) => {
     res.status(200).send(mockUsers);
 });
 
+//update a single user partially
+app.patch("/api/users/:id" , (req,res)=>{
+  const { body, params } = req;
+  const { id } = params;
+
+  const parsedId = Number(id);
+  if (isNaN(parsedId)) return res.sendStatus(400);
+  const findUserIndex = mockUsers.findIndex((user)=> user.id === parsedId);
+
+  if(findUserIndex === -1) return res.sendStatus(404);
+
+  mockUsers[findUserIndex] = {...mockUsers[findUserIndex] , ...body}
+  res.status(200).send(mockUsers);
+})
+
 /**
  * DELETE is used to delete a record
  */
@@ -151,3 +166,5 @@ app.get("/api/products", (req, res) => {
 app.listen(PORT, () => {
   console.log("express server is running on PORT : ", PORT);
 });
+
+

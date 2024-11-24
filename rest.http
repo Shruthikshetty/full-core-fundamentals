@@ -37,3 +37,13 @@ Content-Type: application/json
     "name": "coco",
     "displayName": "mr coco"
 }
+
+
+### update a single user partially
+
+PATCH http://localhost:3000/api/users/1
+Content-Type: application/json
+
+{
+    "displayName": "coco the great"
+}
