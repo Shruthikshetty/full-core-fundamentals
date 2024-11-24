@@ -125,38 +125,49 @@ app.post("/api/users", (req, res) => {
 
 // update a single user
 app.put("/api/users/:id", (req, res) => {
-    const { body, params } = req;
-    const { id } = params;
-
-    const parsedId = Number(id);
-    if (isNaN(parsedId)) return res.sendStatus(400);
-
-    const findUserIndex = mockUsers.findIndex((user) => user.id === parsedId);
-
-    if (findUserIndex === -1) return res.sendStatus(404);
-
-    mockUsers[findUserIndex] = { id: parsedId, ...body };
-    res.status(200).send(mockUsers);
-});
-
-//update a single user partially
-app.patch("/api/users/:id" , (req,res)=>{
   const { body, params } = req;
   const { id } = params;
 
   const parsedId = Number(id);
   if (isNaN(parsedId)) return res.sendStatus(400);
-  const findUserIndex = mockUsers.findIndex((user)=> user.id === parsedId);
 
-  if(findUserIndex === -1) return res.sendStatus(404);
+  const findUserIndex = mockUsers.findIndex((user) => user.id === parsedId);
 
-  mockUsers[findUserIndex] = {...mockUsers[findUserIndex] , ...body}
+  if (findUserIndex === -1) return res.sendStatus(404);
+
+  mockUsers[findUserIndex] = { id: parsedId, ...body };
   res.status(200).send(mockUsers);
-})
+});
+
+//update a single user partially
+app.patch("/api/users/:id", (req, res) => {
+  const { body, params } = req;
+  const { id } = params;
+
+  const parsedId = Number(id);
+  if (isNaN(parsedId)) return res.sendStatus(400);
+  const findUserIndex = mockUsers.findIndex((user) => user.id === parsedId);
+
+  if (findUserIndex === -1) return res.sendStatus(404);
+
+  mockUsers[findUserIndex] = { ...mockUsers[findUserIndex], ...body };
+  res.status(200).send(mockUsers);
+});
 
 /**
  * DELETE is used to delete a record
  */
+app.delete("/api/users/:id", (req, res) => {
+  const { id } = req.params;
+  const parsedId = parseInt(id);
+
+  if (isNaN(parsedId)) return res.sendStatus(400);
+  const findUserIndex = mockUsers.findIndex((user) => user.id === parsedId);
+
+  if (findUserIndex === -1) return res.sendStatus(404);
+  mockUsers.splice(findUserIndex, 1);
+  res.status(200).send(mockUsers);
+});
 
 //product route
 app.get("/api/products", (req, res) => {
@@ -166,5 +177,3 @@ app.get("/api/products", (req, res) => {
 app.listen(PORT, () => {
   console.log("express server is running on PORT : ", PORT);
 });
-
-
