@@ -1,7 +1,13 @@
 import express from "express";
 import dotenv from "dotenv";
-import { query, validationResult, body, matchedData } from "express-validator";
-
+import {
+  query,
+  validationResult,
+  body,
+  matchedData,
+  checkSchema,
+} from "express-validator";
+import { createUserValidationSchema } from "./utils/validationSchemas.mjs";
 // config dotenv to accept environment variables from .env file
 dotenv.config();
 
@@ -156,38 +162,19 @@ app.get("/api/users/:id", (req, res) => {
 });
 
 //post to create a new user
-app.post(
-  "/api/users",
-  [
-    body("name")
-      .notEmpty()
-      .withMessage("name can not be empty ")
-      .isLength({ min: 2, max: 14 })
-      .withMessage("name must be between 2 and 14 characters")
-      .isString()
-      .withMessage("should be string"),
-    body("displayName")
-      .notEmpty()
-      .withMessage("displayName cannot be empty")
-      .isLength({ min: 2, max: 50 })
-      .withMessage("displayName must be between 2 and 50 characters")
-      .isString()
-      .withMessage("displayName should be a string"),
-  ],
-  (req, res) => {
-    const result = validationResult(req);
+app.post("/api/users", checkSchema(createUserValidationSchema), (req, res) => {
+  const result = validationResult(req);
 
-    if (!result.isEmpty())
-      return res.status(400).send({ errors: result.array() });
+  if (!result.isEmpty())
+    return res.status(400).send({ errors: result.array() });
 
-    // gets all the validated data
-    const data = matchedData(req)
-   
-    const newUser = { id: mockUsers[mockUsers.length - 1].id + 1, ...data };
-    mockUsers.push(newUser);
-    res.status(201).send(newUser);
-  }
-);
+  // gets all the validated data
+  const data = matchedData(req);
+
+  const newUser = { id: mockUsers[mockUsers.length - 1].id + 1, ...data };
+  mockUsers.push(newUser);
+  res.status(201).send(newUser);
+});
 
 /**
  * a PATCH req updates a record partially
