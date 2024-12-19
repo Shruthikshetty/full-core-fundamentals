@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import { query, validationResult, body, matchedData } from "express-validator";
 
 // config dotenv to accept environment variables from .env file
 dotenv.config();
@@ -109,23 +110,36 @@ app.get("/", logginMiddleware, (req, res) => {
 });
 
 //user route
-app.get("/api/users", (req, res) => {
-  //   console.log(req.query);
-  const { filter, value } = req.query;
-  if (filter && value) {
-    try {
-      const filteredUsers = mockUsers.filter((user) => {
-        return user[filter].includes(value);
-      });
-      return res.send(filteredUsers);
-    } catch (error) {
-      return res.status(500).send("something went wrong");
-    }
-  }
-  // if there is no filter and value, return all users
+app.get(
+  "/api/users",
+  // validations
+  query("filter")
+    .isString()
+    .notEmpty()
+    .withMessage("must not be empty")
+    .isLength({ min: 2, max: 10 })
+    .withMessage("must be between 3 - 10 char"),
+  (req, res) => {
+    //   console.log(req.query);
+    const result = validationResult(req);
+    //console.log(result);
 
-  return res.send(mockUsers);
-});
+    const { filter, value } = req.query;
+    if (filter && value) {
+      try {
+        const filteredUsers = mockUsers.filter((user) => {
+          return user[filter].includes(value);
+        });
+        return res.send(filteredUsers);
+      } catch (error) {
+        return res.status(500).send("something went wrong");
+      }
+    }
+    // if there is no filter and value, return all users
+
+    return res.send(mockUsers);
+  }
+);
 
 //get a single user by id
 app.get("/api/users/:id", (req, res) => {
@@ -142,12 +156,38 @@ app.get("/api/users/:id", (req, res) => {
 });
 
 //post to create a new user
-app.post("/api/users", (req, res) => {
-  const body = req.body;
-  const newUser = { id: mockUsers[mockUsers.length - 1].id + 1, ...body };
-  mockUsers.push(newUser);
-  res.status(201).send(newUser);
-});
+app.post(
+  "/api/users",
+  [
+    body("name")
+      .notEmpty()
+      .withMessage("name can not be empty ")
+      .isLength({ min: 2, max: 14 })
+      .withMessage("name must be between 2 and 14 characters")
+      .isString()
+      .withMessage("should be string"),
+    body("displayName")
+      .notEmpty()
+      .withMessage("displayName cannot be empty")
+      .isLength({ min: 2, max: 50 })
+      .withMessage("displayName must be between 2 and 50 characters")
+      .isString()
+      .withMessage("displayName should be a string"),
+  ],
+  (req, res) => {
+    const result = validationResult(req);
+
+    if (!result.isEmpty())
+      return res.status(400).send({ errors: result.array() });
+
+    // gets all the validated data
+    const data = matchedData(req)
+   
+    const newUser = { id: mockUsers[mockUsers.length - 1].id + 1, ...data };
+    mockUsers.push(newUser);
+    res.status(201).send(newUser);
+  }
+);
 
 /**
  * a PATCH req updates a record partially

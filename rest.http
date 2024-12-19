@@ -52,3 +52,7 @@ Content-Type: application/json
 ### delete a user
 
 DELETE http://localhost:3000/api/users/3
+
+### get users with query params validation failed
+
+GET http://localhost:3000/api/users?filter=n&value=ja
