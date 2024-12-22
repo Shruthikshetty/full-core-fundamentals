@@ -56,3 +56,34 @@ DELETE http://localhost:3000/api/users/3
 ### get users with query params validation failed
 
 GET http://localhost:3000/api/users?filter=n&value=ja
+
+### authenticate a user
+
+POST http://localhost:3000/api/auth
+Content-Type: application/json
+
+{
+    "name": "john",
+    "password": "hello1"
+}
+
+### get authentication status
+
+GET http://localhost:3000/api/auth/status
+
+
+### add item to cart
+
+POST http://localhost:3000/api/cart
+Content-Type: application/json
+
+{
+    "name": "chicken breast",
+    "price": 100
+}
+
+### see the cart items
+
+GET http://localhost:3000/api/cart
+
+

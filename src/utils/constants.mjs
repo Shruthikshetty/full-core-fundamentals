@@ -4,26 +4,31 @@ export let mockUsers = [
     id: 1,
     name: "john",
     displayName: "john doe",
+    password: "hello1"
   },
   {
     id: 2,
     name: "jane",
     displayName: "jane smith",
+    password: "hello2"
   },
   {
     id: 3,
     name: "bob",
     displayName: "bob wilson",
+    password: "hello3"
   },
   {
     id: 4,
     name: "sarah",
     displayName: "sarah jones",
+    password: "hello4"
   },
   {
     id: 5,
     name: "mike",
     displayName: "mike brown",
+    password: "hello5"
   },
 ];
 
