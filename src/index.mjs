@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 import { logginMiddleware } from "./utils/middlewares.mjs";
 import routes from "./routes/index.mjs";
 import cookieParser from "cookie-parser";
+import session from "express-session";
+
 // config dotenv to accept environment variables from .env file
 dotenv.config();
 
@@ -10,8 +12,22 @@ dotenv.config();
 const app = express();
 
 //set up cookie parser
-app.use(cookieParser())
-
+app.use(cookieParser());
+/**  The session middleware is used to manage user sessions in an
+ * Express application. It allows us to store user-specific data on the server side,
+ * enabling us to maintain state across multiple requests.
+ * This is essential for features like user authentication
+ * and personalized experiences.*/
+app.use(
+  session({
+    secret: "complex code here",
+    saveUninitialized: false,
+    resave: false,
+    cookie: {
+      maxAge: 60000 * 60, // one hour
+    },
+  })
+);
 //middleware to parse json bodies
 app.use(express.json());
 
@@ -29,8 +45,13 @@ const PORT = process.env.PORT ?? 3000;
 // create a route for the base url
 
 app.get("/", logginMiddleware, (req, res) => {
+  // console.log(req.session);
+  console.log(req.session.id);
+
+  // now session id will be samve if its already visited
+  req.session.visited = true;
   // time in mili sec
-  res.cookie("hello", "world",{maxAge: 60000*60})
+  res.cookie("hello", "world", { maxAge: 60000 * 60 });
   res.send("express fundamentals");
 });
 

@@ -40,7 +40,7 @@ router.get(
     // if there is no filter and value, return all users
 
     return res.send(mockUsers);
-  }
+  } 
 );
 
 //get a single user by id
