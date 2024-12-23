@@ -1,18 +1,23 @@
-import express, { request } from "express";
+import express from "express";
 import dotenv from "dotenv";
 import { logginMiddleware } from "./utils/middlewares.mjs";
 import routes from "./routes/index.mjs";
 import cookieParser from "cookie-parser";
 import session from "express-session";
-import { mockUsers } from "./utils/constants.mjs";
 import passport from "passport";
 import "./strategies/local-strategy.mjs";
+import mongoose from "mongoose";
 
 // config dotenv to accept environment variables from .env file
 dotenv.config();
 
 // create an express app
 const app = express();
+//set up mongoose
+mongoose
+  .connect(process.env.MONGO_URL)
+  .then(() => console.log("connected to database"))
+  .catch((err) => console.log(" failed connecting to database"));
 
 //set up cookie parser
 app.use(cookieParser());

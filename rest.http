@@ -25,7 +25,8 @@ Content-Type: application/json
 
  {
      "name": "alice",
-     "displayName": "alice wonderland"
+     "displayName": "alice wonderland",
+     "password":"jonny123"
  }
 
 ### update a single user
@@ -63,8 +64,8 @@ POST http://localhost:3000/api/auth
 Content-Type: application/json
 
 {
-   "name": "bob",
-   "password": "hello3"
+   "name": "alice",
+   "password":"jonny123"
 }
 
 ### get authentication status

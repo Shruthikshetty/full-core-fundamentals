@@ -8,6 +8,7 @@ import {
 import { mockUsers } from "../utils/constants.mjs";
 import { createUserValidationSchema } from "../utils/validationSchemas.mjs";
 import { resolveIndexByuserId } from "../utils/middlewares.mjs";
+import { User } from "../mongoose/schemas/user.mjs";
 // Importing Router from express to create a new router instance for user routes
 const router = Router();
 
@@ -18,7 +19,8 @@ router.get(
     .isString()
     // .notEmpty()
     // .withMessage("must not be empty")
-    .isLength({ min: 2, max: 10 }).optional()
+    .isLength({ min: 2, max: 10 })
+    .optional()
     .withMessage("must be between 3 - 10 char"),
   (req, res) => {
     //   console.log(req.query);
@@ -40,7 +42,7 @@ router.get(
     // if there is no filter and value, return all users
 
     return res.send(mockUsers);
-  } 
+  }
 );
 
 //get a single user by id
@@ -61,7 +63,7 @@ router.get("/api/users/:id", (req, res) => {
 router.post(
   "/api/users",
   checkSchema(createUserValidationSchema),
-  (req, res) => {
+  async (req, res) => {
     const result = validationResult(req);
 
     if (!result.isEmpty())
@@ -70,9 +72,17 @@ router.post(
     // gets all the validated data
     const data = matchedData(req);
 
-    const newUser = { id: mockUsers[mockUsers.length - 1].id + 1, ...data };
-    mockUsers.push(newUser);
-    res.status(201).send(newUser);
+    // Create a new user instance with the validated data
+    const newUser = new User(data);
+    try {
+      // Attempt to save the new user to the database
+      const saveUser = await newUser.save();
+      // Respond with a 201 status and the saved user data
+      return res.status(201).send(saveUser);
+    } catch (err) {
+      // If an error occurs during saving, respond with a 400 status
+      return res.sendStatus(400);
+    }
   }
 );
 

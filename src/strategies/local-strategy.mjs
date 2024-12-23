@@ -1,6 +1,11 @@
+/**
+ * NOTE :--
+ * storage is still local data is from mongoose
+ */
 import passport from "passport";
 import { Strategy } from "passport-local";
 import { mockUsers } from "../utils/constants.mjs";
+import { User } from "../mongoose/schemas/user.mjs";
 
 // This function serializes the user object and stores the user ID in the session.
 // The user ID will be used to identify the user in subsequent requests.
@@ -12,10 +17,11 @@ passport.serializeUser((user, done) => {
 });
 
 // will run when with make next api call
-passport.deserializeUser((id, done) => {
+passport.deserializeUser(async (id, done) => {
   console.log(`Inside the Deserialized`, "id : ", id);
   try {
-    const findUser = mockUsers.find((user) => user.id === Number(id));
+    // find user by id gets a singe record of that id
+    const findUser = await User.findById(id);
     if (!findUser) throw new Error("User not found");
     done(null, findUser);
   } catch (err) {
@@ -25,14 +31,14 @@ passport.deserializeUser((id, done) => {
 
 // use our local stratergy
 export default passport.use(
-  new Strategy({ usernameField: "name" }, (username, password, done) => {
-    console.log(`Useranme : ${username} , Password : ${password}`);
+  new Strategy({ usernameField: "name" }, async (username, password, done) => {
+    //console.log(`Useranme : ${username} , Password : ${password}`);
 
     try {
-      const findUser = mockUsers.find((user) => user.name === username);
-      if (!findUser) throw new Error("User not found");
-      if (findUser.password !== password) throw new Error("Invalied password");
-      // null since no error
+      // find one is used to get a single recored by mentioned key
+      const findUser = await User.findOne({ name: username });
+      if (!findUser) throw new Error("user not found");
+      if (findUser.password !== password) throw new Error("wrong passord");
       done(null, findUser);
     } catch (err) {
       // takes a err and then a user that may be a fasly value
