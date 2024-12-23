@@ -4,9 +4,8 @@
  */
 import passport from "passport";
 import { Strategy } from "passport-local";
-import { mockUsers } from "../utils/constants.mjs";
 import { User } from "../mongoose/schemas/user.mjs";
-
+import { hashPassword, comparePassord } from "../utils/helpers.mjs";
 // This function serializes the user object and stores the user ID in the session.
 // The user ID will be used to identify the user in subsequent requests.
 passport.serializeUser((user, done) => {
@@ -38,7 +37,8 @@ export default passport.use(
       // find one is used to get a single recored by mentioned key
       const findUser = await User.findOne({ name: username });
       if (!findUser) throw new Error("user not found");
-      if (findUser.password !== password) throw new Error("wrong passord");
+      if (!comparePassord(password, findUser.password))
+        throw new Error("wrong passord");
       done(null, findUser);
     } catch (err) {
       // takes a err and then a user that may be a fasly value

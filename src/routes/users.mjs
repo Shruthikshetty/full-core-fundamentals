@@ -9,6 +9,7 @@ import { mockUsers } from "../utils/constants.mjs";
 import { createUserValidationSchema } from "../utils/validationSchemas.mjs";
 import { resolveIndexByuserId } from "../utils/middlewares.mjs";
 import { User } from "../mongoose/schemas/user.mjs";
+import { hashPassword } from "../utils/helpers.mjs";
 // Importing Router from express to create a new router instance for user routes
 const router = Router();
 
@@ -71,7 +72,10 @@ router.post(
 
     // gets all the validated data
     const data = matchedData(req);
-
+    // hassing the password
+    data.password  = hashPassword(data.password)
+    //console.log("hashed pass --->" , data);
+    
     // Create a new user instance with the validated data
     const newUser = new User(data);
     try {
