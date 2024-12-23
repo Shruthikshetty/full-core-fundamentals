@@ -4,13 +4,20 @@ import { logginMiddleware } from "./utils/middlewares.mjs";
 import routes from "./routes/index.mjs";
 import cookieParser from "cookie-parser";
 import session from "express-session";
-import { mockUsers } from "./utils/constants.mjs";
+import passport from "passport";
+import "./strategies/local-strategy.mjs";
+import mongoose from "mongoose";
 
 // config dotenv to accept environment variables from .env file
 dotenv.config();
 
 // create an express app
 const app = express();
+//set up mongoose
+mongoose
+  .connect(process.env.MONGO_URL)
+  .then(() => console.log("connected to database"))
+  .catch((err) => console.log(" failed connecting to database"));
 
 //set up cookie parser
 app.use(cookieParser());
@@ -29,6 +36,12 @@ app.use(
     },
   })
 );
+//initializing passport  its used for authentication and authorizing
+// make sure to use after session
+app.use(passport.initialize());
+// Middleware to manage user sessions using Passport
+app.use(passport.session());
+
 //middleware to parse json bodies
 app.use(express.json());
 
@@ -57,53 +70,30 @@ app.get("/", logginMiddleware, (req, res) => {
 });
 
 // authenticate password endpoint
-app.post("/api/auth", (req, res) => {
-  const { name, password } = req.body;
-
-  const findUser = mockUsers.find((user) => user.name === name);
-  if (!findUser || findUser.password !== password)
-    return res.status(401).send("authentication failed");
-
-  // modify session object to store as session cookie
-  req.session.user = findUser;
-
-  // Return user data without the password
-  const { password: _, ...userWithoutPassword } = findUser;
-  return res.status(200).send(userWithoutPassword);
+// using passport  "local"  is the strategy used
+app.post("/api/auth", passport.authenticate("local"), (req, res) => {
+  res.sendStatus(200);
 });
 
-// check if user is authenticated
+// get user authentication status
 app.get("/api/auth/status", (req, res) => {
-  // checking the session store just for referece
-  req.sessionStore.get(req.sessionID, (err, session) => {
-    console.log("session store--->", session);
-  });
+  console.log("session ---> ", req.session);
 
-  return req.session.user
-    ? res.status(200).send(req.session.user)
-    : res.status(401).send({ msg: "not authenticated" });
-});
-
-// add item to cart works only if authenticated
-app.post("/api/cart", (req, res) => {
-  if (!req.session.user) return res.sendStatus(401);
-  const { body: item } = req;
-
-  const { cart } = req.session;
-  if (cart) {
-    cart.push(item);
+  if (req.user) {
+    res.status(200).send(req.user);
   } else {
-    req.session.cart = [item];
+    return res.status(401).send("not authorized");
   }
-
-  res.status(200).send(item);
 });
 
-// see the cart items
-app.get("/api/cart", (req, res) => {
-  if (!req.session.user) return res.sendStatus(401);
+//log out endpoint
+app.post("/api/auth/logout", (req, res) => {
+  if (!req.user) return res.sendStatus(401);
 
-  return res.send(req.session.cart ?? []);
+  req.logout((err) => {
+    if (err) return res.sendStatus(400);
+    res.sendStatus(200);
+  });
 });
 
 // Start the Express server and listen for incoming requests on the specified PORT

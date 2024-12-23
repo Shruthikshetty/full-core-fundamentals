@@ -24,8 +24,9 @@ POST http://localhost:3000/api/users
 Content-Type: application/json
 
  {
-     "name": "alice",
-     "displayName": "alice wonderland"
+     "name": "mona",
+     "displayName": "mona lilly",
+     "password":"lilly127655"
  }
 
 ### update a single user
@@ -63,8 +64,8 @@ POST http://localhost:3000/api/auth
 Content-Type: application/json
 
 {
-    "name": "john",
-    "password": "hello1"
+    "name": "mona",
+    "password":"lilly127655"
 }
 
 ### get authentication status
@@ -86,4 +87,10 @@ Content-Type: application/json
 
 GET http://localhost:3000/api/cart
 
+### log out a user
+
+POST http://localhost:3000/api/auth/logout
+Content-Type: application/json
+
+{}
 
