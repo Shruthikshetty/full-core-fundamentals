@@ -5,7 +5,7 @@
 import passport from "passport";
 import { Strategy } from "passport-local";
 import { User } from "../mongoose/schemas/user.mjs";
-import { hashPassword, comparePassord } from "../utils/helpers.mjs";
+import { comparePassord } from "../utils/helpers.mjs";
 // This function serializes the user object and stores the user ID in the session.
 // The user ID will be used to identify the user in subsequent requests.
 passport.serializeUser((user, done) => {

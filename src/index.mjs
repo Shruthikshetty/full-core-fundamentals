@@ -7,6 +7,7 @@ import session from "express-session";
 import passport from "passport";
 import "./strategies/local-strategy.mjs";
 import mongoose from "mongoose";
+import MongoStore from "connect-mongo";
 
 // config dotenv to accept environment variables from .env file
 dotenv.config();
@@ -34,6 +35,9 @@ app.use(
     cookie: {
       maxAge: 60000 * 60, // one hour
     },
+    store: MongoStore.create({
+      client: mongoose.connection.getClient(),
+    }),
   })
 );
 //initializing passport  its used for authentication and authorizing
