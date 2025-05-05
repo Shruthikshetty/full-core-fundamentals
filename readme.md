@@ -19,13 +19,13 @@
 
 ## Setting Up Jest in the Project:
 
-4. Intall following pacakges to set up jest
+1. Intall following pacakges to set up jest
 
    ```
    npm install --save-dev  @babel/core @babel/preset-env @babel/node jest @types/jest
    ```
 
-5. create a .babelrc
+2. create a .babelrc
    ```json
    {
      "presets": [
@@ -41,14 +41,14 @@
    }
    ```
 
-6. Once done, run `jest --init`. This will create a `jest.config.mjs` file. Make sure to comment out the `moduleFileExtensions` line and add the following under the `transform` property:
+3. Once done, run `jest --init`. This will create a `jest.config.mjs` file. Make sure to comment out the `moduleFileExtensions` line and add the following under the `transform` property:
    ```javascript
    transform: {
        "^.+\\.m?js$": "babel-jest"
    },
    ```
 
-7. Ensure that you create a `jsconfig.json` file and add the following content:
+4. Ensure that you create a `jsconfig.json` file and add the following content:
    ```json
    {
        "typeAcquisition": {
@@ -58,4 +58,4 @@
    ```
    This will ensure that the required global imports for Jest are set up correctly.
 
-8. It is a common practice to place all test files in a `__tests__` folder and to name each test file with the suffix `.test.js` or `.spec.js`.
+5. It is a common practice to place all test files in a `__tests__` folder and to name each test file with the suffix `.test.js` or `.spec.js`.
